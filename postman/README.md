@@ -1,7 +1,7 @@
-# Camunda Unit Tests with C#
+# Camunda Unit Tests with Newman
 A sample project that uses unit testing with newman (postman cli) and docker to test a Camunda process.
 
-It is strongly based in the solution found in this repository: https://github.com/DannyDainton/postman-docker
+You can find more information about postman in docker in the following links: https://hub.docker.com/r/postman/newman_alpine33, https://github.com/DannyDainton/postman-docker
 
 ## Show me the important parts!
 Process used as part of the sample:
@@ -17,10 +17,8 @@ This project is based in the script "run.sh" that does the following:
 The folder [dockerdata](dockerdata) contains some files that are necessary for the test, such as:
 1. [Postman collection](dockerdata/payment-process.postman_collection.json): This is the collection that is executed in postman. You can modify the collection in postman according to your needs.
 2. [Postman environment](dockerdata/payment-process.postman_environment.json): This is the environment that is used in postman. You can modify the environment in postman according to your needs.
-3. [BPMN Process](dockerdata/process.bpmn):	The BPMN used in the test. You can
-4. [Newman HTML Template](dockerdata/custom-template.hbs): The HTML template used to generate the HTML testing report. It was obtained [here](https://github.com/DannyDainton/postman-docker/blob/master/src/reports/templates/customTemplate.hbs).
-
-You should see a HTML report in the folder "dockerdata/reports" with the results of the test.
+3. [BPMN Process](dockerdata/process.bpmn):	The BPMN used in the test. You can overwrite the bpmn according to your needs.
+4. [Newman HTML Template](dockerdata/custom-template.hbs): The HTML template used to generate the testing result report. It was obtained [here](https://github.com/DannyDainton/postman-docker/blob/master/src/reports/templates/customTemplate.hbs).
 
 ## How to use it?
 You can execute it by running the script [run.sh](run.sh).

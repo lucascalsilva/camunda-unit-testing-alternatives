@@ -36,7 +36,7 @@ Tested with docker 19.03.5 in MacOS High Sierra (10.13.6).
 
 ## Known Limitations
 
-Only supports UNIX environments, since it uses SH scripts.
+The main script is a SH script, so it only runs in UNIX environments. To run in Windows, just run the commands separately.
 
 ## Improvements Backlog
 

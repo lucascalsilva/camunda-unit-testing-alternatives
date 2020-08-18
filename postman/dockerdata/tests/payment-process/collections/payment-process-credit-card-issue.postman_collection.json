@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "b8ea2ab3-ef62-42ff-b75a-081f2ce724ab",
+		"name": "payment-process-credit-card-issue",
+		"description": "Example to test a process with Postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "deploy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cd17599e-48fd-4000-b078-dee88161735b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData.id);",
+							"pm.collectionVariables.set(\"deploymentId\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "deployment-name",
+							"value": "test-suite",
+							"type": "text"
+						},
+						{
+							"key": "deployment-source",
+							"value": "postman-tests",
+							"type": "text"
+						},
+						{
+							"key": "payment-model",
+							"type": "file",
+							"src": "{{payment-model}}"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/deployment/create",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"deployment",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "start process",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0a305a78-81fd-400f-aac8-21a2dc0a5caf",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"var processInstanceId = jsonData.id;",
+							"console.log(processInstanceId);",
+							"pm.collectionVariables.set(\"processInstanceId\", processInstanceId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"businessKey\": \"Test1\",\n  \"startInstructions\": [\n    {\n      \"type\": \"startBeforeActivity\",\n      \"activityId\": \"IsThereAnyRemainingAmountGateway\"\n    }\n  ],\n  \"variables\": {\n    \"error\": {\n      \"value\": true\n    },\n    \"resolvable\": {\n      \"value\": true\n    },\n    \"paymentAmount\": {\n      \"value\": 10000\n    },\n    \"remainingAmount\": {\n      \"value\": 100\n    }\n  },\n  \"resultEnabled\": true\n}"
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/process-definition/key/PaymentProcess/start",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"process-definition",
+						"key",
+						"PaymentProcess",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "waiting at deduct credit card",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "38ba7ae5-8070-4042-9187-b468e99fa80f",
+						"exec": [
+							"pm.test(\"assert external task credit deducting\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    console.log(jsonData);",
+							"    pm.expect(jsonData[0].topicName).to.eql(\"charge-credit-card\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData[0].id)",
+							"pm.collectionVariables.set(\"externalTaskId\", jsonData[0].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{camunda-base-url}}/external-task?processInstanceId={{processInstanceId}}",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"external-task"
+					],
+					"query": [
+						{
+							"key": "processInstanceId",
+							"value": "{{processInstanceId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch and lock",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fa25d4b3-86e0-4f24-bdf9-d48094026995",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"external task id match\", function () {",
+							"    var externalTaskId = pm.collectionVariables.get(\"externalTaskId\");",
+							"    console.log(\"External task fetched: \" + externalTaskId);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0].id).to.eql(externalTaskId);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workerId\": \"postman test\",\n    \"maxTasks\": 1,\n    \"topics\": [\n        {\n            \"topicName\": \"charge-credit-card\",\n            \"lockDuration\": 10000\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/external-task/fetchAndLock",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"external-task",
+						"fetchAndLock"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "handle error on charge credit card",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e4e8ff39-bd8f-482f-b36e-0f827d71d3f4",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"workerId\": \"postman test\",\n    \"errorCode\":\"CreditCardChargeError\",\n    \"errorMessage\":\"Error when trying to charge credit card\"\n}"
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/external-task/{{externalTaskId}}/bpmnError",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"external-task",
+						"{{externalTaskId}}",
+						"bpmnError"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "waiting at resolve issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b77655b5-7546-4b7d-b52d-11d0e67696d4",
+						"exec": [
+							"pm.test(\"assert resolve issue task\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    console.log(jsonData);",
+							"    pm.expect(jsonData[0].taskDefinitionKey).to.eql(\"ResolveIssueTask\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData[0].id)",
+							"pm.collectionVariables.set(\"taskId\", jsonData[0].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{camunda-base-url}}/task?processInstanceId={{processInstanceId}}",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"task"
+					],
+					"query": [
+						{
+							"key": "processInstanceId",
+							"value": "{{processInstanceId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "complete task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "add7fe50-43a4-4f32-a338-9cd84ef7d39c",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n}"
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/task/{{taskId}}/complete",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"task",
+						"{{taskId}}",
+						"complete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "waiting at deduct credit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28f02617-42e6-4c7e-bf86-570a1f7fd92e",
+						"exec": [
+							"pm.test(\"assert external task Payment finished\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    console.log(jsonData);",
+							"    pm.expect(jsonData[0].topicName).to.eql(\"charge-credit\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData[0].id)",
+							"pm.collectionVariables.set(\"externalTaskId\", jsonData[0].id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{camunda-base-url}}/external-task?processInstanceId={{processInstanceId}}",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"external-task"
+					],
+					"query": [
+						{
+							"key": "processInstanceId",
+							"value": "{{processInstanceId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete deployment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "79d59249-c915-4a1a-808e-6c237abd479c",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{camunda-base-url}}/deployment/{{deploymentId}}?cascade=true",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"deployment",
+						"{{deploymentId}}"
+					],
+					"query": [
+						{
+							"key": "cascade",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "66434576-9d7c-4011-b67a-34eebe4cb850",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "962e57ed-fa81-45fc-8662-6fa56d9df37b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "a22054d9-823b-4c57-b3cd-3fef61b44037",
+			"key": "deploymentId",
+			"value": ""
+		},
+		{
+			"id": "115b234b-0afb-4e33-b021-3ce9d84d76cb",
+			"key": "processInstanceId",
+			"value": ""
+		},
+		{
+			"id": "abb3b332-c192-425c-b468-9a3fb826a42a",
+			"key": "externalTaskId",
+			"value": ""
+		},
+		{
+			"id": "61363511-26d2-4ec5-9fb7-b023d942ba63",
+			"key": "taskId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}

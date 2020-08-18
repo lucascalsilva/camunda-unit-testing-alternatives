@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0n5j0c4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.0.0">
+  <bpmn:process id="SimpleProcess" name="SimpleProcess" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1nztark" sourceRef="ProcessStartedStartEvent" targetRef="DoSomethingTask" />
+    <bpmn:userTask id="DoSomethingTask" name="Do Something">
+      <bpmn:incoming>Flow_1nztark</bpmn:incoming>
+      <bpmn:outgoing>Flow_18k0v6y</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="ProcessFinishedEndEvent" name="Process Finished">
+      <bpmn:incoming>Flow_18k0v6y</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_18k0v6y" sourceRef="DoSomethingTask" targetRef="ProcessFinishedEndEvent" />
+    <bpmn:startEvent id="ProcessStartedStartEvent" name="Process Started">
+      <bpmn:outgoing>Flow_1nztark</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0tllqyc" messageRef="Message_0wlbgkk" />
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_0wlbgkk" name="ProcessStartedMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SimpleProcess">
+      <bpmndi:BPMNEdge id="Flow_1nztark_di" bpmnElement="Flow_1nztark">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18k0v6y_di" bpmnElement="Flow_18k0v6y">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1ljp7vs_di" bpmnElement="DoSomethingTask">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0sxzuur_di" bpmnElement="ProcessFinishedEndEvent">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="408" y="142" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ygw9yb_di" bpmnElement="ProcessStartedStartEvent">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="142" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

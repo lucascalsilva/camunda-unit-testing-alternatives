@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "68128f4c-bc38-4fca-aef5-1afc851016ac",
+		"name": "simple-process",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "deploy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "142f2f68-6a9b-4a95-912c-1191b6c3bedf",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var jsonData = pm.response.json();",
+							"console.log(jsonData.id);",
+							"pm.collectionVariables.set(\"deploymentId\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "deployment-name",
+							"value": "test-suite",
+							"type": "text"
+						},
+						{
+							"key": "deployment-source",
+							"value": "postman-tests",
+							"type": "text"
+						},
+						{
+							"key": "simple-process-model",
+							"type": "file",
+							"src": "{{simple-model}}"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{camunda-base-url}}/deployment/create",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"deployment",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete deployment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1e3acfd4-ab9e-43fd-a4b6-d63458548c42",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{camunda-base-url}}/deployment/{{deploymentId}}?cascade=true",
+					"host": [
+						"{{camunda-base-url}}"
+					],
+					"path": [
+						"deployment",
+						"{{deploymentId}}"
+					],
+					"query": [
+						{
+							"key": "cascade",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "b6f87877-d944-4d0e-9918-dda13e6e5d70",
+			"key": "deploymentId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}

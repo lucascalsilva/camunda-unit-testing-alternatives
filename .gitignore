@@ -243,4 +243,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-dockerdata/reports/*
+*/dockerdata/tests/*/collections/output

@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "11c1220f-b744-41a4-a6f6-5ef320016174",
-		"name": "microservices-training-tests",
+		"_postman_id": "d28be318-212c-4c96-91fd-a12ab586ce03",
+		"name": "payment-process",
 		"description": "Example to test a process with Postman",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "3db7e42f-991f-49d8-b6f5-dee55d406d71",
+						"id": "aac107e5-7cd5-441a-8590-55d25e2a696c",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -44,7 +44,7 @@
 						{
 							"key": "payment-model",
 							"type": "file",
-							"src": "/etc/newman/process.bpmn"
+							"src": "{{payment-model}}"
 						}
 					]
 				},
@@ -67,7 +67,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "89ba5a37-76a1-4355-87b3-fc23b2babac9",
+						"id": "aff13f28-287a-46a5-a31f-0ae14eed52d7",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -114,7 +114,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "20752547-2e54-410b-bc3e-1513b900615c",
+						"id": "53f8b41c-d693-4098-87b8-04fb54db0f6e",
 						"exec": [
 							"pm.test(\"assert external task credit deducting\", function () {",
 							"    var jsonData = pm.response.json();",
@@ -157,7 +157,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "896f0a76-11af-4a7c-8395-694418b8158c",
+						"id": "56cb4c0e-d1f2-4a2d-9dc1-c90c7a423d83",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -206,7 +206,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "880cf3c4-aebe-4581-84fb-839b207767c4",
+						"id": "5378233e-35fd-44d1-820a-477589e4006b",
 						"exec": [
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
@@ -250,7 +250,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "20752547-2e54-410b-bc3e-1513b900615c",
+						"id": "6105587c-9dfd-45ca-8fb0-6bb4ea3072e6",
 						"exec": [
 							"pm.test(\"assert external task Charge credit card\", function () {",
 							"    var jsonData = pm.response.json();",
@@ -293,7 +293,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "896f0a76-11af-4a7c-8395-694418b8158c",
+						"id": "0780096b-8c56-4437-bdb4-34892a1b8eb1",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -342,7 +342,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "880cf3c4-aebe-4581-84fb-839b207767c4",
+						"id": "0ae94baf-4a48-44ff-a8f4-4652c6b9874f",
 						"exec": [
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
@@ -386,7 +386,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "20752547-2e54-410b-bc3e-1513b900615c",
+						"id": "c8ae1f4d-eb9e-4c80-9cec-4fd480b8a6d6",
 						"exec": [
 							"pm.test(\"assert external task Payment finished\", function () {",
 							"    var jsonData = pm.response.json();",
@@ -429,7 +429,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "896f0a76-11af-4a7c-8395-694418b8158c",
+						"id": "fffa3c63-447a-48a4-b650-7b0ec77c3199",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -478,7 +478,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "880cf3c4-aebe-4581-84fb-839b207767c4",
+						"id": "ff2deb43-67f6-45ed-a081-29719bddd1ab",
 						"exec": [
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
@@ -522,7 +522,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1b17ba5a-cf82-4379-8361-3f75218adfee",
+						"id": "1fd003ec-b722-4a35-8783-f3484fd48b6a",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -559,7 +559,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "fe44a8b3-02a0-40df-b7ee-8df7ef54d60b",
+						"id": "4ec095e5-6625-4e42-9e19-4cd4d8208fb4",
 						"exec": [
 							"pm.test(\"Status code is 204\", function () {",
 							"    pm.response.to.have.status(204);",
@@ -596,7 +596,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "f4dd8b96-39ea-4cbd-b5de-1117ea38f23c",
+				"id": "4726b28a-a1f1-4bf5-b744-cfa3c3c6d0ed",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -606,7 +606,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "e13b3303-6c8d-4885-ba97-967f338126e4",
+				"id": "81c0d125-fc1a-441c-9d05-2c4785ceba5b",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -616,22 +616,20 @@
 	],
 	"variable": [
 		{
-			"id": "05db86f0-8875-4aee-a582-55ed244d794a",
+			"id": "ee68b553-9cfd-4c3e-b2e5-d0e90e0a752d",
 			"key": "deploymentId",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "8dc9a02b-c8f4-4223-a60c-8bc3789f0ddd",
+			"id": "5525ff84-31c1-4bd1-ab2f-5425bc602aa6",
 			"key": "processInstanceId",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "656edb24-0235-4660-a546-d51cbf113a6d",
+			"id": "c4920a1c-b79b-4841-b29f-5f08dca80f80",
 			"key": "externalTaskId",
-			"value": "",
-			"type": "string"
+			"value": ""
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
